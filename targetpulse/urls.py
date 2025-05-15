@@ -22,4 +22,6 @@ urlpatterns = [
     path('boards/<int:board_pk>/tasks/<int:task_pk>/delete/', views.task_delete, name='task_delete'),
     path('boards/<int:board_pk>/tasks/<int:task_pk>/change_status/', views.change_task_status, name='change_task_status'),
     path('my-tasks/', views.my_tasks_view, name='my_tasks'),
+    path('tasks/<int:task_pk>/start_timer/', views.start_timer, name='start_timer'),
+    path('tasks/<int:task_pk>/stop_timer/', views.stop_timer, name='stop_timer'),
 ]

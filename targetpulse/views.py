@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from .models import Task, UserProfile, Board
+from .models import Task, UserProfile, Board, Notification, TimeEntry
 from django import forms
 from django.http import HttpResponseForbidden
 from django.urls import reverse
@@ -10,6 +10,8 @@ from django.forms import ModelForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import BoardForm, TaskForm
+from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 # Форма для редактирования профиля
 class ProfileForm(forms.ModelForm):
@@ -24,8 +26,11 @@ class ProfileForm(forms.ModelForm):
 def index_view(request):
     return render(request, 'targetpulse/index.html')
 
+@login_required
 def task_detail(request, pk):
-    return render(request, 'targetpulse/task_detail.html', {'task': {'title': 'Тестовая задача'}})
+    task = get_object_or_404(Task, pk=pk)
+    total_time = sum([entry.time_spent for entry in task.time_entries.all()])
+    return render(request, 'targetpulse/task_detail.html', {'task': task, 'total_time': total_time})
 
 def login_view(request):
     if request.method == 'POST':
@@ -208,24 +213,39 @@ def task_create(request, board_pk):
             task = form.save(commit=False)
             task.board = board
             task.save()
+            form.save_m2m()
+            # Создаём уведомление, если назначен пользователь
+            if task.user:
+                Notification.objects.create(
+                    user=task.user,
+                    message=f'Вам назначена новая задача: {task.title}'
+                )
             return redirect('board_detail', pk=board.pk)
     else:
         form = TaskForm(board=board)
     return render(request, 'targetpulse/task_form.html', {'form': form, 'board': board})
 
 @login_required
-def task_edit(request, task_pk):
-    task = get_object_or_404(Task, pk=task_pk)
-    if request.user not in task.board.members.all():
+def task_edit(request, board_pk, task_pk):
+    board = get_object_or_404(Board, pk=board_pk)
+    task = get_object_or_404(Task, pk=task_pk, board=board)
+    if request.user not in board.members.all():
         return HttpResponseForbidden()
+    old_user = task.user
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task, board=task.board)
+        form = TaskForm(request.POST, instance=task, board=board)
         if form.is_valid():
-            form.save()
-            return redirect('board_detail', pk=task.board.pk)
+            task = form.save()
+            # Если назначение изменилось, создаём уведомление
+            if task.user and task.user != old_user:
+                Notification.objects.create(
+                    user=task.user,
+                    message=f'Вам назначена новая задача: {task.title}'
+                )
+            return redirect('board_detail', pk=board.pk)
     else:
-        form = TaskForm(instance=task, board=task.board)
-    return render(request, 'targetpulse/task_form.html', {'form': form, 'board': task.board, 'edit': True})
+        form = TaskForm(instance=task, board=board)
+    return render(request, 'targetpulse/task_form.html', {'form': form, 'board': board, 'edit': True})
 
 @login_required
 def task_delete(request, board_pk, task_pk):
@@ -273,3 +293,25 @@ def my_tasks_view(request):
     # Get all tasks assigned to the current user
     tasks = Task.objects.filter(user=request.user).order_by('-id')
     return render(request, 'targetpulse/my_tasks.html', {'tasks': tasks})
+
+@login_required
+def start_timer(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    if request.user != task.user:
+        return HttpResponseForbidden()
+    # Проверяем, нет ли уже незавершённого таймера
+    active_entry = TimeEntry.objects.filter(task=task, user=request.user, time_spent=0).first()
+    if not active_entry:
+        TimeEntry.objects.create(task=task, user=request.user)
+    return JsonResponse({'started': True})
+
+@login_required
+def stop_timer(request, task_pk):
+    task = get_object_or_404(Task, pk=task_pk)
+    if request.user != task.user:
+        return HttpResponseForbidden()
+    entry = TimeEntry.objects.filter(task=task, user=request.user, time_spent=0).first()
+    if entry:
+        entry.time_spent = (timezone.now() - entry.created_at).total_seconds() / 3600
+        entry.save()
+    return JsonResponse({'stopped': True})

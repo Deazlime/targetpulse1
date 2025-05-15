@@ -1,0 +1,10 @@
+<div class="task-timer">
+    <span id="timer-{{ task.id }}">00:00:00</span>
+    <button onclick="taskTimer.startTimer()" class="btn btn-success">Старт</button>
+    <button onclick="taskTimer.stopTimer()" class="btn btn-danger">Стоп</button>
+</div>
+
+<script src="{% static 'js/timer.js' %}"></script>
+<script>
+    const taskTimer = new TaskTimer({{ task.id }}, {{ user.id }});
+</script> 

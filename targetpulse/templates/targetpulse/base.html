@@ -7,7 +7,7 @@
     <title>{% block title %}TargetPulse{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <script src="{% static 'js/timer.js' %}" defer></script>
+    <!--<script src="{% static 'js/timer.js' %}" defer></script>-->
     <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
 </head>
 <body>
@@ -24,6 +24,10 @@
             {% endif %}
             <div class="nav-links">
                 {% if user.is_authenticated %}
+                    <div id="notification-block" class="notification-block" data-user-id="{{ user.id }}">
+                        <span id="notification-icon">🔔</span>
+                        <div id="notification-list" class="notification-list" style="display:none;"></div>
+                    </div>
                     <div class="user-panel">
                         <a href="{% url 'board_list' %}" class="panel-link">Мои доски</a>
                         <a href="{% url 'my_tasks' %}" class="panel-link">Мои задачи</a>
@@ -49,5 +53,6 @@
     <div class="footer-text">
         <img src="{% static 'images/logo1.png' %}" alt="TargetPulse Logo" class="footer-logo">
     </div>
+    <script src="{% static 'js/notifications.js' %}"></script>
 </body>
 </html>

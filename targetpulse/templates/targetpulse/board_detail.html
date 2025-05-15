@@ -134,7 +134,7 @@
 }
 </style>
 <div class="kanban-header-actions">
-    <a href="{% url 'board_list' %}" class="back-btn">Мои задачи</a>
+    <a href="{% url 'my_tasks' %}" class="back-btn">Мои задачи</a>
     {% if user == board.creator %}
     <a href="{% url 'board_edit' board.id %}" class="edit-board-btn">Редактировать доску</a>
     {% endif %}

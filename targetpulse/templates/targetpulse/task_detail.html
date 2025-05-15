@@ -1,4 +1,5 @@
 {% extends 'targetpulse/base.html' %}
+{% load static %}
 {% block title %}{{ task.title }} - TargetPulse{% endblock %}
 {% block content %}
 <h1>{{ task.title }}</h1>
@@ -9,9 +10,10 @@
     <p><strong>Дедлайн:</strong> {{ task.deadline|default:"Нет" }}</p>
     <p><strong>Назначено:</strong> {{ task.assigned_to|default:"Никому" }}</p>
     <p><strong>Прогресс:</strong> {{ task.progress }}%</p>
-    <p><strong>Время:</strong> <span id="time-{{ task.id }}">{{ task.total_time|floatformat:2 }}</span> часов</p>
-    {% if user.groups.first.name == "Developer" and task.assigned_to == user %}
-        <button data-task-id="{{ task.id }}" class="timer-btn btn btn-secondary">Запустить таймер</button>
+    <p><strong>Время:</strong> <span id="time-{{ task.id }}">{{ total_time|floatformat:2 }}</span> часов</p>
+    {% if user == task.user or user.userprofile.role == 'developer' %}
+        <button id="start-timer-btn" data-task-id="{{ task.id }}" class="timer-btn btn btn-secondary">Запустить таймер</button>
+        <button id="stop-timer-btn" data-task-id="{{ task.id }}" class="timer-btn btn btn-secondary" style="display:none;">Остановить таймер</button>
     {% endif %}
     {% if user.groups.first.name == "Manager" or user == task.creator %}
         <a href="{% url 'task_edit' task.id %}" class="btn btn-edit">Редактировать задачу</a>
@@ -19,3 +21,4 @@
     {% endif %}
 </div>
 {% endblock %}
+<script src="{% static 'js/task_timer.js' %}"></script>

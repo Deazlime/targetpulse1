@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.utils import timezone
+from django.core.mail import send_mail
 
 class Task(models.Model):
     title = models.CharField(max_length=200)
@@ -40,11 +46,19 @@ class UserProfile(models.Model):
 class TimeEntry(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='time_entries')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    time_spent = models.FloatField(default=0.0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(default=timezone.now)
+    end_time = models.DateTimeField(null=True, blank=True)
+    duration = models.DurationField(null=True, blank=True)
+    is_running = models.BooleanField(default=True)
+
+    def stop_timer(self):
+        self.end_time = timezone.now()
+        self.duration = self.end_time - self.start_time
+        self.is_running = False
+        self.save()
 
     def __str__(self):
-        return f"{self.task.title} - {self.time_spent} часов"
+        return f"{self.task.title} - {self.duration}"
 
 class Board(models.Model):
     title = models.CharField(max_length=255)
@@ -55,3 +69,44 @@ class Board(models.Model):
 
     def __str__(self):
         return self.title
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message}"
+
+@receiver(post_save, sender=Notification)
+def send_notification_ws(sender, instance, created, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+        if channel_layer is None:
+            # Можно добавить логирование, если нужно
+            return
+        group_name = f'notifications_{instance.user.id}'
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'send_notification',
+                'message': instance.message,
+                'created_at': instance.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+        )
+
+def send_task_assignment_email(task):
+    if task.user and task.user.email:
+        send_mail(
+            subject='Вам назначена новая задача',
+            message=f'Вам назначена задача: {task.title}\nОписание: {task.description}',
+            from_email='noreply@targetpulse.local',
+            recipient_list=[task.user.email],
+            fail_silently=True,
+        )
+
+@receiver(post_save, sender=Task)
+def task_assignment_email_signal(sender, instance, created, **kwargs):
+    if created or 'user_id' in instance.get_deferred_fields():
+        send_task_assignment_email(instance)
