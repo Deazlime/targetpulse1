@@ -1,0 +1,47 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}{% if edit %}Редактировать задачу{% else %}Создать задачу{% endif %}{% endblock %}
+{% block content %}
+<div class="board-form-container" style="background: #b3d8ef; border-radius: 25px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); padding: 40px; max-width: 600px; margin: 40px auto;">
+    <h1 class="board-form-title" style="text-align:center; font-size:2.5rem; font-weight:700; color:#2c3e50; margin-bottom:30px;">{% if edit %}Редактировать задачу{% else %}Создать задачу{% endif %}</h1>
+    <form method="post" style="display:flex; flex-direction:column; gap: 25px;">
+        {% csrf_token %}
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_title" style="font-weight:600; font-size:1.1rem;">Название задачи</label>
+            {{ form.title }}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_description" style="font-weight:600; font-size:1.1rem;">Описание</label>
+            {{ form.description }}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_status" style="font-weight:600; font-size:1.1rem;">Статус</label>
+            {{ form.status }}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_priority" style="font-weight:600; font-size:1.1rem;">Приоритет</label>
+            {{ form.priority }}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_deadline" style="font-weight:600; font-size:1.1rem;">Дедлайн</label>
+            {{ form.deadline }}
+        </div>
+        {% if user.groups.first.name == "Manager" %}
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_user" style="font-weight:600; font-size:1.1rem;">Назначить задачу</label>
+            {{ form.user }}
+        </div>
+        {% endif %}
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_progress" style="font-weight:600; font-size:1.1rem;">Прогресс выполнения (%)</label>
+            <div style="display:flex; align-items:center; gap:12px;">
+                {{ form.progress }}
+                <output id="progressOutput">{{ form.progress.value|default:0 }}</output>%
+            </div>
+        </div>
+        <div style="display:flex; gap:20px; margin-top:20px;">
+            <button type="submit" class="btn btn-primary" style="min-width:120px;">{% if edit %}Сохранить{% else %}Создать{% endif %}</button>
+            <a href="{% url 'board_detail' board.pk %}" class="btn btn-secondary" style="min-width:120px;">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

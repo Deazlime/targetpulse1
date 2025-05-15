@@ -1,0 +1,62 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}Профиль пользователя - TargetPulse{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Профиль пользователя</h1>
+    </div>
+    
+    <!-- Секция аватара -->
+    <div class="avatar-section">
+        <div class="avatar">
+            <img src="{% static 'images/user-avatar.png' %}" alt="User Avatar" class="user-avatar">
+        </div>
+    </div>
+    
+    <!-- Форма профиля -->
+    <form class="profile-form" method="POST" id="profileForm">
+        {% csrf_token %}
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+        <div class="form-group">
+            <label for="id_username">Никнейм</label>
+            <input type="text" name="username" id="id_username" value="{{ user.username }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_first_name">Имя</label>
+            <input type="text" name="first_name" id="id_first_name" value="{{ user.userprofile.first_name|default:'' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_last_name">Фамилия</label>
+            <input type="text" name="last_name" id="id_last_name" value="{{ user.userprofile.last_name|default:'' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_email">Почта</label>
+            <input type="email" name="email" id="id_email" value="{{ user.email }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">Новый пароль</label>
+            <input type="password" name="password" id="id_password" placeholder="Оставьте пустым, если не хотите менять пароль">
+            <small class="form-text">Введите новый пароль, если хотите его изменить.</small>
+        </div>
+        
+        <button type="submit" class="save-btn">Сохранить изменения</button>
+    </form>
+</div>
+
+<script>
+    // Обработка формы
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        this.submit();
+    });
+</script>
+{% endblock %}

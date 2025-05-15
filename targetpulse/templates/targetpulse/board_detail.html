@@ -1,0 +1,234 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}{{ board.title }} - Kanban{% endblock %}
+{% block content %}
+<style>
+.kanban-header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-left: 220px;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    align-items: flex-start;
+}
+.back-btn, .edit-board-btn {
+    background: #f28c38;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px #e0b88a;
+    display: inline-block;
+}
+.back-btn:hover, .edit-board-btn:hover {
+    background: #d8702a;
+    color: #fff;
+}
+.kanban-column {
+    background: #d6eaff;
+    border-radius: 18px;
+    padding: 14px;
+    min-width: 270px;
+    flex: 1;
+    margin: 0 6px;
+    box-shadow: 0 2px 8px #c0d6e4;
+}
+.kanban-column h3 {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+.kanban-tasks {
+    min-height: 40px;
+    min-width: 220px;
+}
+.kanban-task {
+    border-radius: 12px;
+    margin-bottom: 14px;
+    padding: 14px 16px 12px 16px;
+    box-shadow: 0 2px 8px #b0b0b0;
+    background: #fff;
+    position: relative;
+    transition: box-shadow 0.2s, background 0.2s;
+    cursor: grab;
+    border-top: 6px solid #f0ad4e;
+}
+.kanban-task[data-status="В ожидании"] { border-top-color: #f0ad4e; background: #fffbe6; }
+.kanban-task[data-status="В работе"] { border-top-color: #5bc0de; background: #e6f7ff; }
+.kanban-task[data-status="Выполнить"] { border-top-color: #4285f4; background: #e6f0ff; }
+.kanban-task[data-status="Завершено"] { border-top-color: #5cb85c; background: #eaffea; }
+.kanban-task.dragging { opacity: 0.6; box-shadow: 0 0 16px #4285f4; }
+.kanban-tasks.drag-over { background: #cbe7ff; transition: background 0.2s; }
+.priority-label { display:inline-block; font-size:0.95em; font-weight:600; border-radius:6px; padding:2px 10px; margin-bottom:4px; }
+.priority-low { background:#d4edda; color:#218838; }
+.priority-medium { background:#fff3cd; color:#856404; }
+.priority-high { background:#f8d7da; color:#721c24; }
+.deadline-label { display:inline-block; font-size:0.95em; border-radius:6px; padding:2px 10px; background:#f0f0f0; color:#c62828; margin-bottom:4px; margin-left:6px; }
+.add-task-btn {
+    background: #f28c38;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px #e0b88a;
+    display: inline-block;
+}
+.add-task-btn:hover {
+    background: #d8702a;
+    color: #fff;
+}
+.kanban-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: flex-start;
+}
+.kanban-column {
+    min-width: 0;
+    flex: 1 1 0;
+    max-width: 100%;
+}
+.progress-bar-bg {
+    background: #e0e0e0;
+    border-radius: 6px;
+    height: 10px;
+    width: 100%;
+    position: relative;
+}
+.progress-bar-fill {
+    background: linear-gradient(90deg, #f28c38 0%, #5cb85c 100%);
+    height: 10px;
+    border-radius: 6px;
+    transition: width 0.3s;
+}
+.task-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+.task-actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+    text-align: center;
+    font-size: 1.05em;
+    font-weight: 600;
+    padding: 10px 0;
+}
+@media (max-width: 600px) {
+    .task-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+</style>
+<div class="kanban-header-actions">
+    <a href="{% url 'board_list' %}" class="back-btn">Мои задачи</a>
+    {% if user == board.creator %}
+    <a href="{% url 'board_edit' board.id %}" class="edit-board-btn">Редактировать доску</a>
+    {% endif %}
+    <a href="{% url 'task_create' board.id %}" class="add-task-btn">Добавить задачу</a>
+</div>
+<div class="kanban-container">
+    {% for status, tasks in tasks_by_status %}
+    <div class="kanban-column">
+        <h3>{{ status }}</h3>
+        <div class="kanban-tasks" data-status="{{ status }}" ondrop="onDrop(event)" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)">
+            {% for task in tasks %}
+            <div class="kanban-task" draggable="true" data-task-id="{{ task.id }}" data-status="{{ task.status }}" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+                <div style="font-weight:700; font-size:1.1em; margin-bottom:4px;">{{ task.title }}</div>
+                {% if task.user %}<div style="font-size:0.95em; color:#555; margin-bottom:2px;">Для {{ task.user.get_full_name|default:task.user.username }}</div>{% endif %}
+                <div style="font-size:0.98em; color:#444; margin-bottom:6px;">{{ task.description }}</div>
+                <div>
+                    <span class="priority-label priority-{{ task.priority }}">{{ task.get_priority_display }}</span>
+                    {% if task.deadline %}<span class="deadline-label">{{ task.deadline|date:'d M Y' }}</span>{% endif %}
+                </div>
+                <div style="margin: 8px 0 4px 0;">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width:{{ task.progress }}%"></div>
+                    </div>
+                    <div style="font-size:0.95em; color:#444; margin-top:2px;">Прогресс: {{ task.progress }}%</div>
+                </div>
+                <div style="font-size:0.95em; color:#888; margin-bottom:4px;">Статус: {{ task.status }}</div>
+                <div class="task-actions">
+                    <a href="{% url 'task_edit' board.id task.id %}" class="btn btn-secondary btn-sm">Редактировать</a>
+                    <a href="{% url 'task_delete' board.id task.id %}" class="btn btn-secondary btn-sm">Удалить</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+let draggedTask = null;
+function onDragStart(event) {
+    event.dataTransfer.setData('taskId', event.target.dataset.taskId);
+    event.target.classList.add('dragging');
+    draggedTask = event.target;
+}
+function onDragEnd(event) {
+    event.target.classList.remove('dragging');
+    draggedTask = null;
+}
+function onDragOver(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+    // Для сортировки внутри колонки
+    if (draggedTask && event.target.classList.contains('kanban-task') && event.target !== draggedTask) {
+        const container = event.currentTarget;
+        const afterElement = getDragAfterElement(container, event.clientY);
+        if (afterElement == null) {
+            container.appendChild(draggedTask);
+        } else {
+            container.insertBefore(draggedTask, afterElement);
+        }
+    }
+}
+function onDragLeave(event) {
+    event.currentTarget.classList.remove('drag-over');
+}
+function onDrop(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    const taskId = event.dataTransfer.getData('taskId');
+    const newStatus = event.currentTarget.dataset.status;
+    // Если статус не меняется, просто оставляем карточку на месте (визуально)
+    if (draggedTask && draggedTask.dataset.status === newStatus) {
+        return;
+    }
+    fetch(`/boards/{{ board.id }}/tasks/${taskId}/change_status/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: new URLSearchParams({status: newStatus})
+    }).then(resp => {
+        if (resp.ok) location.reload();
+    });
+}
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.kanban-task:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: -Infinity }).element;
+}
+</script>
+{% endblock %} 

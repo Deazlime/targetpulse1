@@ -1,0 +1,29 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}Мои задачи - TargetPulse{% endblock %}
+{% block content %}
+<div class="boards-container">
+    <h1 class="boards-title">Мои доски</h1>
+    <a href="{% url 'board_create' %}" class="btn btn-primary create-board-btn">Создать доску</a>
+    {% if boards %}
+        <div class="boards-list">
+            {% for board in boards %}
+                <div class="board-card">
+                    <div class="board-title">{{ board.title }}</div>
+                    <div class="board-description">{{ board.description|default:'Без описания' }}</div>
+                    <div class="board-status">{{ board.is_public|yesno:'Публичная,Приватная' }}</div>
+                    <div class="board-actions">
+                        <a href="{% url 'board_detail' board.id %}" class="btn btn-primary">Открыть</a>
+                        {% if user == board.creator %}
+                            <a href="{% url 'board_edit' board.id %}" class="btn btn-secondary">Редактировать</a>
+                            <a href="{% url 'board_delete' board.id %}" class="btn btn-secondary">Удалить</a>
+                            <a href="{% url 'add_member' board.id %}" class="btn btn-secondary">Добавить участника</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>У вас пока нет досок.</p>
+    {% endif %}
+</div>
+{% endblock %} 

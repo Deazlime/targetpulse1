@@ -1,0 +1,646 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5e6d3; /* Светло-бежевый фон */
+    min-height: 100vh;
+    padding: 20px;
+    position: relative; /* Для позиционирования элементов интерфейса */
+}
+
+/* Навигационная панель сверху */
+.navbar {
+    background-color: #333333;
+    padding: 15px 0;
+    width: 100%;
+    position: fixed; /* Фиксируем сверху */
+    top: 0;
+    left: 0;
+    z-index: 100; /* Выше других элементов */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex
+;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    /* align-content: stretch; */
+    align-items: stretch;
+    justify-content: center;
+}
+
+.container1 {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: inline-block; /* Для корректного отображения ссылки с изображением */
+}
+
+.logo-img-nav {
+    height: 40px; /* Размер логотипа в шапке */
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 16px;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.user-panel {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Отступ между ссылками и приветствием */
+}
+
+.panel-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.panel-link:hover {
+    color: #f28c38; /* Оранжевый при наведении */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Отступ между аватаром и именем */
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; /* Круглый аватар */
+    object-fit: cover;
+}
+
+.username {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Основное содержимое (центрирование формы) */
+.main-content {
+    min-height: calc(100vh - 60px); /* Учитываем высоту navbar */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 80px; /* Увеличен для учета высоты шапки и контента */
+}
+
+/* Элементы интерфейса (чёрный восклицательный знак и оранжевый круг) */
+.interface-element.left {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 60px;
+    background-color: #4a2c2a; /* Тёмно-коричневый */
+    border-radius: 10px;
+}
+
+.interface-element.bottom {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: #f28c38; /* Оранжевый */
+    border-radius: 50%;
+}
+
+.interface-element.bottom-right {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    border: 2px solid #f28c38; /* Оранжевая обводка */
+}
+
+/* Стили для приветственной страницы */
+.header-container {
+    text-align: center;
+    margin-bottom: 60px; /* Увеличиваем расстояние до welcome-container */
+    padding-top: 20px;
+}
+
+.logo-img {
+    width: 600px; /* Размер логотипа на главной странице */
+    height: auto;
+    max-height: 500px;
+}
+
+.welcome-container {
+    background-color: #a3c9d0; /* Голубой фон карточки */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    position: relative;
+    z-index: 1; /* Чтобы карточка была над интерфейсными элементами */
+}
+
+.welcome-title {
+    font-size: 32px; /* Увеличен размер для акцента */
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.welcome-subtitle {
+    font-size: 20px;
+    color: #34495e;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.welcome-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+
+.welcome-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Для ссылок */
+    color: inherit; /* Для ссылок */
+}
+
+.btn-primary {
+    background-color: #f28c38; /* Оранжевый цвет кнопки */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #d8702a; /* Более тёмный оранжевый при наведении */
+}
+
+.btn-secondary {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #27ae60;
+}
+
+/* Подпись внизу справа */
+.footer-text {
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    z-index: 1; /* Чтобы логотип был над другими элементами */
+}
+
+.footer-logo {
+    height: 24px; /* Меньший размер для футера */
+    width: auto;
+    opacity: 0.8; /* Лёгкая прозрачность */
+    transition: opacity 0.3s;
+}
+
+.footer-logo:hover {
+    opacity: 1; /* Полная видимость при наведении */
+}
+
+/* Стили для страниц логина и регистрации */
+.login-container {
+    background-color: #a3c9d0; /* Голубой фон карточки */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    z-index: 1; /* Чтобы форма была над интерфейсными элементами */
+}
+
+.form-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #666666;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444444;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f8e8d0; /* Светлый фон для полей */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #f28c38; /* Оранжевая обводка при фокусе */
+    box-shadow: 0 0 8px rgba(242, 140, 56, 0.3);
+    outline: none;
+}
+
+.form-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666666;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 25px;
+}
+
+.forgot-password a {
+    color: #666666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    background-color: #f28c38; /* Оранжевый цвет кнопки */
+    color: white;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+}
+
+.login-button:hover {
+    background-color: #d8702a; /* Более тёмный оранжевый при наведении */
+}
+
+/* Стили для списка досок */
+.boards-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.boards-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.create-board-btn {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 30px;
+}
+
+.boards-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.board-card {
+    background-color: #a3c9d0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.board-card:hover {
+    transform: translateY(-5px);
+}
+
+.board-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.board-description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.board-status {
+    font-size: 14px;
+    color: #34495e;
+    margin-bottom: 15px;
+}
+
+.board-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Стили для форм досок */
+.board-form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #a3c9d0 0%, #8ab4c3 100%);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+}
+
+.board-form-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Стили для страницы профиля */
+.profile-container {
+    background: linear-gradient(135deg, #a3c9d0 0%, #8ab4c3 100%);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+}
+
+.profile-container:hover {
+    transform: translateY(-5px);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.profile-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background-color: #f28c38;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Аватар */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #e1e1e1;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+    border: 3px solid #f28c38;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(242, 140, 56, 0.5);
+}
+
+.avatar .user-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Форма профиля */
+.profile-form .form-group {
+    margin-bottom: 20px;
+}
+
+.profile-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.profile-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #ffffff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.profile-form input:focus {
+    border-color: #f28c38;
+    box-shadow: 0 0 8px rgba(242, 140, 56, 0.3);
+    outline: none;
+}
+
+/* Кнопка "Сохранить изменения" */
+.save-btn {
+    background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+    color: white;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+.save-btn:hover {
+    background: linear-gradient(90deg, #3e8e41 0%, #55a359 100%);
+    transform: translateY(-2px);
+}
+
+/* Второстепенные кнопки */
+.btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-change {
+    background: linear-gradient(90deg, #2196F3 0%, #42A5F5 100%);
+    color: white;
+    border: none;
+}
+
+.btn-change:hover {
+    background: linear-gradient(90deg, #0b7dda 0%, #2196F3 100%);
+    transform: translateY(-2px);
+}
+
+.btn-remove {
+    background-color: transparent;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+}
+
+.btn-remove:hover {
+    background: linear-gradient(90deg, #e74c3c 0%, #ef5350 100%);
+    color: white;
+    border: none;
+    transform: translateY(-2px);
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .profile-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .avatar-placeholder {
+        font-size: 32px;
+    }
+
+    .profile-title {
+        font-size: 24px;
+    }
+
+    .save-btn,
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .boards-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стили для страницы ошибок */
+.error-container {
+    text-align: center;
+    padding: 40px;
+}
+
+.error-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #e74c3c;
+    margin-bottom: 20px;
+}

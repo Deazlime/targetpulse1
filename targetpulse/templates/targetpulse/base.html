@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TargetPulse{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <script src="{% static 'js/timer.js' %}" defer></script>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container1">
+            {% if user.is_authenticated %}
+                <a href="{% url 'board_list' %}" class="logo">
+                    <img src="{% static 'images/logo.png' %}" alt="TargetPulse Logo" class="logo-img-nav">
+                </a>
+            {% else %}
+                <a href="{% url 'index' %}" class="logo">
+                    <img src="{% static 'images/logo.png' %}" alt="TargetPulse Logo" class="logo-img-nav">
+                </a>
+            {% endif %}
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <div class="user-panel">
+                        <a href="{% url 'board_list' %}" class="panel-link">Мои доски</a>
+                        <a href="{% url 'my_tasks' %}" class="panel-link">Мои задачи</a>
+                        <a href="{% url 'company' %}" class="panel-link">Моя компания</a>
+                        <a href="{% url 'profile' %}" class="panel-link">Мой профиль</a>
+                        <div class="user-info">
+                            <img src="{% static 'images/user-avatar.png' %}" alt="User Avatar" class="user-avatar">
+                            <span class="username">{{ user.username }}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'logout' %}" class="nav-link">Выйти</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <div class="footer-text">
+        <img src="{% static 'images/logo1.png' %}" alt="TargetPulse Logo" class="footer-logo">
+    </div>
+</body>
+</html>

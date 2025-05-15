@@ -1,0 +1,21 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}{{ task.title }} - TargetPulse{% endblock %}
+{% block content %}
+<h1>{{ task.title }}</h1>
+<div class="task-detail">
+    <p><strong>Описание:</strong> {{ task.description }}</p>
+    <p><strong>Статус:</strong> {{ task.status }}</p>
+    <p><strong>Приоритет:</strong> {{ task.priority }}</p>
+    <p><strong>Дедлайн:</strong> {{ task.deadline|default:"Нет" }}</p>
+    <p><strong>Назначено:</strong> {{ task.assigned_to|default:"Никому" }}</p>
+    <p><strong>Прогресс:</strong> {{ task.progress }}%</p>
+    <p><strong>Время:</strong> <span id="time-{{ task.id }}">{{ task.total_time|floatformat:2 }}</span> часов</p>
+    {% if user.groups.first.name == "Developer" and task.assigned_to == user %}
+        <button data-task-id="{{ task.id }}" class="timer-btn btn btn-secondary">Запустить таймер</button>
+    {% endif %}
+    {% if user.groups.first.name == "Manager" or user == task.creator %}
+        <a href="{% url 'task_edit' task.id %}" class="btn btn-edit">Редактировать задачу</a>
+        <a href="{% url 'task_delete' task.id %}" class="btn btn-delete">Удалить задачу</a>
+    {% endif %}
+</div>
+{% endblock %}

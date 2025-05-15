@@ -1,0 +1,27 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}TargetPulse - Добро пожаловать{% endblock %}
+
+{% block content %}
+<div class="header-container">
+    <div class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="TargetPulse Logo" class="logo-img">
+    </div>
+</div>
+
+<div class="welcome-container">
+    <div class="welcome-title">Добро пожаловать в TargetPulse!</div>
+    <div class="welcome-subtitle">Начните путь к вашим целям вместе с нами</div>
+    <p class="welcome-text">TargetPulse — это ваша новая платформа для управления задачами, постановки целей и достижения успеха. Присоединяйтесь к сообществу, чтобы превратить идеи в действия!</p>
+
+    <div class="welcome-actions">
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="btn btn-primary">Перейти в профиль</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+            <a href="{% url 'register' %}" class="btn btn-secondary">Регистрация</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

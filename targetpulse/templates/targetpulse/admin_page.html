@@ -1,0 +1,13 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}Панель администратора - TargetPulse{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Панель администратора</h1>
+    <p>{{ message }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Вы вошли как {{ user.username }}.</p>
+</div>
+{% endblock %}

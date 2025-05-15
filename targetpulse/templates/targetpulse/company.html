@@ -1,0 +1,79 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}Моя компания - TargetPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title company-title">Моя компания</h1>
+    
+    <div class="company-members">
+        <table class="members-table">
+            <thead>
+                <tr>
+                    <th>Пользователь</th>
+                    <th>Должность</th>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in team_members %}
+                <tr>
+                    <td>
+                        <a href="{% url 'user_profile' profile.user.username %}" class="member-link">
+                            {{ profile.user.username }}
+                        </a>
+                    </td>
+                    <td>{{ profile.get_role_display }}</td>
+                    <td>{{ profile.first_name }}</td>
+                    <td>{{ profile.last_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .company-title {
+        text-align: center;
+        margin-top: 6rem;
+        margin-bottom: 3rem;
+    }
+    .company-members {
+        margin-top: 2rem;
+        text-align: center;
+    }
+    
+    .members-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        margin: 0 auto;
+    }
+    
+    .members-table th,
+    .members-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .members-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .member-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .member-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %} 

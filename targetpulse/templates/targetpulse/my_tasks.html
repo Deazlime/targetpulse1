@@ -1,0 +1,220 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}Мои задачи - TargetPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Мои задачи</h1>
+    
+    <div class="tasks-container">
+        {% if tasks %}
+            <div class="tasks-grid">
+                {% for task in tasks %}
+                    <div class="task-card">
+                        <div class="task-header">
+                            <h3 class="task-title">{{ task.title }}</h3>
+                            <span class="task-status {{ task.status|lower }}">{{ task.status }}</span>
+                        </div>
+                        <div class="task-info">
+                            <p class="task-description">{{ task.description|truncatechars:100 }}</p>
+                            <div class="task-meta">
+                                <span class="task-priority {{ task.priority }}">{{ task.get_priority_display }}</span>
+                                {% if task.deadline %}
+                                    <span class="task-deadline">Дедлайн: {{ task.deadline }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: {{ task.progress }}%"></div>
+                                </div>
+                                <span class="progress-text">{{ task.progress }}%</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <a href="{% url 'task_detail' task.id %}" class="btn btn-view">Подробнее</a>
+                            {% if task.board %}
+                                <a href="{% url 'board_detail' task.board.id %}" class="btn btn-board">Перейти к доске</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-tasks">
+                <p>У вас пока нет назначенных задач.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .tasks-container {
+        margin-top: 2rem;
+    }
+
+    .tasks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .task-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        transition: transform 0.2s;
+    }
+
+    .task-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .task-title {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+    }
+
+    .task-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .task-status.в ожидании {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .task-status.в работе {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .task-status.завершено {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .task-info {
+        margin-bottom: 1rem;
+    }
+
+    .task-description {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .task-meta {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .task-priority {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 500;
+        margin-right: 1rem;
+    }
+
+    .task-priority.low {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .task-priority.medium {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .task-priority.high {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .task-deadline {
+        display: inline-block;
+        color: #666;
+    }
+
+    .task-progress {
+        margin-bottom: 1rem;
+    }
+
+    .progress-bar {
+        background: #f5f5f5;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .progress {
+        background: #4caf50;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .task-actions {
+        margin-top: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-right: 1rem;
+    }
+
+    .btn-view {
+        background: #2196f3;
+        color: white;
+    }
+
+    .btn-view:hover {
+        background: #1976d2;
+    }
+
+    .btn-board {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .btn-board:hover {
+        background: #e0e0e0;
+    }
+
+    .no-tasks {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .no-tasks p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %} 

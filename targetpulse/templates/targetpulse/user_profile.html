@@ -1,0 +1,81 @@
+{% extends 'targetpulse/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }} - TargetPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <img src="{% static 'images/user-avatar.png' %}" alt="User Avatar" class="profile-avatar">
+            <h1>{{ profile_user.username }}</h1>
+        </div>
+        
+        <div class="profile-info">
+            <div class="info-group">
+                <label>Должность:</label>
+                <span>{{ profile.get_role_display }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Имя:</label>
+                <span>{{ profile.first_name }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Фамилия:</label>
+                <span>{{ profile.last_name }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Email:</label>
+                <span>{{ profile_user.email }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+    }
+    
+    .profile-info {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .info-group {
+        display: flex;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .info-group label {
+        font-weight: 600;
+        width: 100px;
+        color: #666;
+    }
+    
+    .info-group span {
+        flex: 1;
+    }
+</style>
+{% endblock %} 

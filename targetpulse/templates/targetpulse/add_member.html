@@ -1,0 +1,16 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}Добавить участника - TargetPulse{% endblock %}
+{% block content %}
+<h1>Добавить участника в "{{ board.title }}"</h1>
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+        <a href="{% url 'board_detail' board.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

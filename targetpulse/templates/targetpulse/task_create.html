@@ -1,0 +1,54 @@
+{% extends 'targetpulse/base.html' %}
+{% block title %}Создать задачу - TargetPulse{% endblock %}
+{% block content %}
+<h1>Создать новую задачу</h1>
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Название</label>
+            <input type="text" name="title" id="title" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание</label>
+            <textarea name="description" id="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="status">Статус</label>
+            <select name="status" id="status">
+                <option value="В ожидании">В ожидании</option>
+                <option value="В работе">В работе</option>
+                <option value="Завершено">Завершено</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="priority">Приоритет</label>
+            <select name="priority" id="priority">
+                <option value="Низкий">Низкий</option>
+                <option value="Средний">Средний</option>
+                <option value="Высокий">Высокий</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Дедлайн</label>
+            <input type="date" name="deadline" id="deadline">
+        </div>
+        {% if user.groups.first.name == "Manager" %}
+        <div class="form-group">
+            <label for="assigned_to">Назначить</label>
+            <select name="assigned_to" id="assigned_to">
+                <option value="">Никому</option>
+                {% for member in board.members.all %}
+                    <option value="{{ member.id }}">{{ member.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="progress">Прогресс (%)</label>
+            <input type="number" name="progress" id="progress" min="0" max="100" value="0">
+        </div>
+        <button type="submit" class="btn btn-primary">Создать</button>
+    </form>
+</div>
+{% endblock %}
