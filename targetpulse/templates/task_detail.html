@@ -1,10 +1,8 @@
+{% load static %}
 <div class="task-timer">
-    <span id="timer-{{ task.id }}">00:00:00</span>
-    <button onclick="taskTimer.startTimer()" class="btn btn-success">Старт</button>
-    <button onclick="taskTimer.stopTimer()" class="btn btn-danger">Стоп</button>
+    <div id="timer-{{ task.id }}" class="timer-container">
+        <div id="timer-display-{{ task.id }}" class="timer-display">00:00:00</div>
+        <button class="btn btn-primary" id="timer-btn-{{ task.id }}">Запустить таймер</button>
+    </div>
 </div>
-
-<script src="{% static 'js/timer.js' %}"></script>
-<script>
-    const taskTimer = new TaskTimer({{ task.id }}, {{ user.id }});
-</script> 
+<script src="{% static 'js/timer.js' %}"></script> 

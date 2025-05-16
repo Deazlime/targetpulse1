@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import BoardForm, TaskForm
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 
 # Форма для редактирования профиля
 class ProfileForm(forms.ModelForm):
@@ -218,7 +218,8 @@ def task_create(request, board_pk):
             if task.user:
                 Notification.objects.create(
                     user=task.user,
-                    message=f'Вам назначена новая задача: {task.title}'
+                    message=f'Вам назначена новая задача: {task.title}',
+                    task=task
                 )
             return redirect('board_detail', pk=board.pk)
     else:
@@ -240,7 +241,8 @@ def task_edit(request, board_pk, task_pk):
             if task.user and task.user != old_user:
                 Notification.objects.create(
                     user=task.user,
-                    message=f'Вам назначена новая задача: {task.title}'
+                    message=f'Вам назначена новая задача: {task.title}',
+                    task=task
                 )
             return redirect('board_detail', pk=board.pk)
     else:
@@ -294,24 +296,108 @@ def my_tasks_view(request):
     tasks = Task.objects.filter(user=request.user).order_by('-id')
     return render(request, 'targetpulse/my_tasks.html', {'tasks': tasks})
 
-@login_required
-def start_timer(request, task_pk):
-    task = get_object_or_404(Task, pk=task_pk)
-    if request.user != task.user:
-        return HttpResponseForbidden()
-    # Проверяем, нет ли уже незавершённого таймера
-    active_entry = TimeEntry.objects.filter(task=task, user=request.user, time_spent=0).first()
-    if not active_entry:
-        TimeEntry.objects.create(task=task, user=request.user)
-    return JsonResponse({'started': True})
+@require_POST
+def start_timer(request, task_id):
+    task = Task.objects.get(id=task_id)
+    # Останавливаем все активные таймеры для этой задачи
+    TimeEntry.objects.filter(task=task, is_running=True).update(
+        end_time=timezone.now(),
+        is_running=False
+    )
+    # Создаем новый таймер
+    time_entry = TimeEntry.objects.create(
+        task=task,
+        user=request.user,
+        start_time=timezone.now()
+    )
+    return JsonResponse({
+        'status': 'success',
+        'timer_id': time_entry.id,
+        'start_time': time_entry.start_time.isoformat()
+    })
 
-@login_required
-def stop_timer(request, task_pk):
-    task = get_object_or_404(Task, pk=task_pk)
-    if request.user != task.user:
-        return HttpResponseForbidden()
-    entry = TimeEntry.objects.filter(task=task, user=request.user, time_spent=0).first()
-    if entry:
-        entry.time_spent = (timezone.now() - entry.created_at).total_seconds() / 3600
-        entry.save()
-    return JsonResponse({'stopped': True})
+@require_POST
+def stop_timer(request, timer_id):
+    time_entry = TimeEntry.objects.get(id=timer_id, user=request.user)
+    time_entry.stop_timer()
+    return JsonResponse({
+        'status': 'success',
+        'duration': str(time_entry.duration)
+    })
+
+@require_POST
+def get_timer_status(request, task_id):
+    task = Task.objects.get(id=task_id)
+    active_timer = TimeEntry.objects.filter(task=task, is_running=True).first()
+    if active_timer:
+        return JsonResponse({
+            'status': 'running',
+            'timer_id': active_timer.id,
+            'start_time': active_timer.start_time.isoformat()
+        })
+    return JsonResponse({'status': 'stopped'})
+
+@require_http_methods(["GET"])
+def get_notifications(request):
+    notifications = Notification.objects.filter(
+        user=request.user,
+        is_read=False,
+        task__isnull=False,
+        task__in=Task.objects.all()
+    ).order_by('-created_at')
+    
+    return JsonResponse({
+        'notifications': [
+            {
+                'id': n.id,
+                'message': n.message,
+                'created_at': n.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'url': f'/tasks/{n.task.id}/' if n.task else '#'
+            } for n in notifications
+        ],
+        'total_count': notifications.count()
+    })
+
+@require_http_methods(["GET"])
+def check_new_notifications(request):
+    since = request.GET.get('since')
+    if not since:
+        return JsonResponse({'error': 'Missing since parameter'}, status=400)
+        
+    notifications = Notification.objects.filter(
+        user=request.user,
+        is_read=False,
+        created_at__gt=since,
+        task__isnull=False,
+        task__in=Task.objects.all()
+    ).order_by('-created_at')
+    
+    return JsonResponse({
+        'notifications': [
+            {
+                'id': n.id,
+                'message': n.message,
+                'created_at': n.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'url': f'/tasks/{n.task.id}/' if n.task else '#'
+            } for n in notifications
+        ],
+        'total_count': Notification.objects.filter(user=request.user, is_read=False, task__isnull=False, task__in=Task.objects.all()).count()
+    })
+
+@csrf_exempt
+@require_POST
+def mark_notification_read(request, notif_id):
+    notif = get_object_or_404(Notification, id=notif_id, user=request.user)
+    notif.is_read = True
+    notif.save()
+    return JsonResponse({'status': 'ok'})
+
+@require_POST
+def set_task_status(request, task_id):
+    task = Task.objects.get(id=task_id)
+    status = request.POST.get('status')
+    if status in ['В ожидании', 'В работе', 'Завершено']:
+        task.status = status
+        task.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'error': 'Invalid status'})

@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <!--<script src="{% static 'js/timer.js' %}" defer></script>-->
-    <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
 </head>
 <body>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
     <nav class="navbar">
         <div class="container1">
             {% if user.is_authenticated %}

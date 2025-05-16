@@ -24,4 +24,11 @@ urlpatterns = [
     path('my-tasks/', views.my_tasks_view, name='my_tasks'),
     path('tasks/<int:task_pk>/start_timer/', views.start_timer, name='start_timer'),
     path('tasks/<int:task_pk>/stop_timer/', views.stop_timer, name='stop_timer'),
+    path('api/timer/start/<int:task_id>/', views.start_timer, name='start_timer'),
+    path('api/timer/stop/<int:timer_id>/', views.stop_timer, name='stop_timer'),
+    path('api/timer/status/<int:task_id>/', views.get_timer_status, name='get_timer_status'),
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/check/', views.check_new_notifications, name='check_new_notifications'),
+    path('api/notifications/read/<int:notif_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('api/task/<int:task_id>/set_status/', views.set_task_status, name='set_task_status'),
 ]
