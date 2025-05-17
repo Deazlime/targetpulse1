@@ -19,7 +19,7 @@ class BoardForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'priority', 'deadline', 'progress', 'user']
+        fields = ['title', 'description', 'status', 'priority', 'deadline', 'progress', 'user', 'spent_time', 'estimated_time']
         labels = {
             'title': 'Название задачи',
             'description': 'Описание',
@@ -28,6 +28,8 @@ class TaskForm(forms.ModelForm):
             'deadline': 'Дедлайн',
             'progress': 'Прогресс выполнения (%)',
             'user': 'Назначить задачу',
+            'spent_time': 'Затраченное время (часы:минуты)',
+            'estimated_time': 'Планируемое время (часы:минуты)',
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите название задачи'}),
@@ -37,6 +39,8 @@ class TaskForm(forms.ModelForm):
             'deadline': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'progress': forms.NumberInput(attrs={'class': 'form-range', 'type': 'range', 'min': 0, 'max': 100, 'step': 1, 'oninput': 'progressOutput.value = value'}),
             'user': forms.Select(attrs={'class': 'form-control'}),
+            'spent_time': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '00:00', 'pattern': '[0-9]{2}:[0-9]{2}'}),
+            'estimated_time': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '00:00', 'pattern': '[0-9]{2}:[0-9]{2}'}),
         }
 
     def __init__(self, *args, **kwargs):

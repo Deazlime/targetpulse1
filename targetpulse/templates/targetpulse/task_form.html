@@ -38,6 +38,18 @@
                 <output id="progressOutput">{{ form.progress.value|default:0 }}</output>%
             </div>
         </div>
+        {% if form.status.value != 'Завершено' %}
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_estimated_time" style="font-weight:600; font-size:1.1rem;">Планируемое время (часы:минуты)</label>
+            {{ form.estimated_time }}
+        </div>
+        {% endif %}
+        {% if form.status.value == 'Завершено' %}
+        <div style="display:flex; flex-direction:column; gap:18px;">
+            <label for="id_spent_time" style="font-weight:600; font-size:1.1rem;">Затраченное время (часы:минуты)</label>
+            {{ form.spent_time }}
+        </div>
+        {% endif %}
         <div style="display:flex; gap:20px; margin-top:20px;">
             <button type="submit" class="btn btn-primary" style="min-width:120px;">{% if edit %}Сохранить{% else %}Создать{% endif %}</button>
             <a href="{% url 'board_detail' board.pk %}" class="btn btn-secondary" style="min-width:120px;">Отмена</a>

@@ -161,9 +161,15 @@
                     <div style="font-size:0.95em; color:#444; margin-top:2px;">Прогресс: {{ task.progress }}%</div>
                 </div>
                 <div style="font-size:0.95em; color:#888; margin-bottom:4px;">Статус: {{ task.status }}</div>
+                {% if task.status != 'Завершено' and task.estimated_time %}
+                <div style="font-size:0.95em; color:#444; margin-bottom:4px;">Планируемое время: {{ task.estimated_time }}</div>
+                {% endif %}
+                {% if task.status == 'Завершено' and task.spent_time %}
+                <div style="font-size:0.95em; color:#444; margin-bottom:4px;">Затраченное время: {{ task.spent_time }}</div>
+                {% endif %}
                 <div class="task-actions">
-                    <a href="{% url 'task_edit' board.id task.id %}" class="btn btn-secondary btn-sm">Редактировать</a>
-                    <a href="{% url 'task_delete' board.id task.id %}" class="btn btn-secondary btn-sm">Удалить</a>
+                    <a href="{% url 'task_edit' board.id task.id %}" class="btn btn-view">Редактировать</a>
+                    <a href="{% url 'task_delete' board.id task.id %}" class="btn btn-view">Удалить</a>
                 </div>
             </div>
             {% endfor %}

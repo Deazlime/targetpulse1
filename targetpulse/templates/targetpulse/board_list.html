@@ -14,9 +14,9 @@
                     <div class="board-actions">
                         <a href="{% url 'board_detail' board.id %}" class="btn btn-primary">Открыть</a>
                         {% if user == board.creator %}
-                            <a href="{% url 'board_edit' board.id %}" class="btn btn-secondary">Редактировать</a>
-                            <a href="{% url 'board_delete' board.id %}" class="btn btn-secondary">Удалить</a>
-                            <a href="{% url 'add_member' board.id %}" class="btn btn-secondary">Добавить участника</a>
+                            <a href="{% url 'board_edit' board.id %}" class="btn btn-view">Редактировать</a>
+                            <a href="{% url 'board_delete' board.id %}" class="btn btn-view">Удалить</a>
+                            <a href="{% url 'add_member' board.id %}" class="btn btn-primary">Добавить участника</a>
                         {% endif %}
                     </div>
                 </div>

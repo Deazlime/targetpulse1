@@ -388,11 +388,11 @@ body {
 }
 
 .board-card {
-    background-color: #a3c9d0;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    background: #a3c9d0 !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s;
 }
 
 .board-card:hover {
@@ -676,4 +676,60 @@ body {
 }
 .notification-item:last-child {
     border-bottom: none;
+}
+
+.btn-view {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    background: #90caf9; /* Светло-голубой цвет */
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s;
+    margin-right: 1rem;
+    min-width: 120px;
+    text-align: center;
+}
+.btn-view:hover {
+    background: #64b5f6; /* Более темный светло-голубой при наведении */
+    color: white;
+}
+
+.btn-blue {
+    background-color: #90caf9; /* Светло-голубой цвет */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px #90caf9;
+    display: inline-block;
+}
+.btn-blue:hover {
+    background-color: #64b5f6; /* Более темный светло-голубой при наведении */
+    color: #fff;
+}
+
+.btn-large {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+.task-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+.task-actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+    text-align: center;
+    margin-right: 0;
 }

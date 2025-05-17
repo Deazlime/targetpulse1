@@ -244,6 +244,19 @@ def task_edit(request, board_pk, task_pk):
                     message=f'Вам назначена новая задача: {task.title}',
                     task=task
                 )
+            # Обработка времени
+            if task.status == 'Завершено' and 'spent_time' in request.POST:
+                time_str = request.POST['spent_time']
+                if time_str:
+                    hours, minutes = map(int, time_str.split(':'))
+                    task.spent_time = timezone.timedelta(hours=hours, minutes=minutes)
+                    task.save()
+            elif task.status != 'Завершено' and 'estimated_time' in request.POST:
+                time_str = request.POST['estimated_time']
+                if time_str:
+                    hours, minutes = map(int, time_str.split(':'))
+                    task.estimated_time = timezone.timedelta(hours=hours, minutes=minutes)
+                    task.save()
             return redirect('board_detail', pk=board.pk)
     else:
         form = TaskForm(instance=task, board=board)

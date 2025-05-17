@@ -24,6 +24,8 @@ class Task(models.Model):
     priority = models.CharField(max_length=10, choices=[('low', 'Низкий'), ('medium', 'Средний'), ('high', 'Высокий')], default='medium')
     deadline = models.DateField(null=True, blank=True)
     progress = models.PositiveSmallIntegerField(default=0)
+    spent_time = models.DurationField(null=True, blank=True)
+    estimated_time = models.DurationField(null=True, blank=True)
 
     def __str__(self):
         return self.title

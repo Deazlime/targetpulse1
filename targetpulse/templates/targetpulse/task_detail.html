@@ -10,17 +10,10 @@
     <p><strong>Дедлайн:</strong> {{ task.deadline|default:"Нет" }}</p>
     <p><strong>Назначено:</strong> {{ task.user|default:"Никому" }}</p>
     <p><strong>Прогресс:</strong> {{ task.progress }}%</p>
-    <p><strong>Время:</strong> <span id="time-{{ task.id }}">{{ total_time|floatformat:2 }}</span> часов</p>
-    <div class="timer-container" id="timer-{{ task.id }}">
-        <div class="timer-display" id="timer-display-{{ task.id }}">00:00:00</div>
-        <button class="btn btn-primary" id="timer-btn-{{ task.id }}">Запустить таймер</button>
-    </div>
     {% if user.groups.first.name == "Manager" or user == task.creator %}
         <a href="{% url 'task_edit' task.id %}" class="btn btn-edit">Редактировать задачу</a>
         <a href="{% url 'task_delete' task.id %}" class="btn btn-delete">Удалить задачу</a>
     {% endif %}
-    
     {% csrf_token %}
 </div>
 {% endblock %}
-<script src="{% static 'js/timer.js' %}"></script>
